@@ -1,0 +1,54 @@
+/* Background gradient */
+body {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Video card */
+#videoCard {
+    border: none;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+#videoCard:hover {
+    transform: scale(1.03);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Video container */
+#videoContainer {
+    position: relative;
+    background: black;
+}
+
+/* Video */
+#webcam {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Canvas overlay */
+#overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Card body */
+#videoCard .card-body {
+    background: rgba(0, 0, 0, 0.75);
+    padding: 1rem;
+    border-top: 2px solid #2575fc;
+}
+
+/* Dominant emotion */
+#faceCount {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #ffdd57;
+    transition: color 0.3s;
+}
