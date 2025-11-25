@@ -49,7 +49,7 @@ const emotionChart = new Chart(chartCtx, {
             legend: {
                 position: 'bottom',
                 labels: {
-                    color: '#ffffff', // make legend text white for dark background
+                    color: '#ffffff',
                 }
             },
             tooltip: {
@@ -86,7 +86,7 @@ function detectEmotions() {
 
             // Aggregate emotions for chart
             const aggregatedEmotions = {};
-            emotionsList.forEach(e => aggregatedEmotions[e] = 0);
+            emotionsList.forEach(emo => aggregatedEmotions[emo] = 0);
 
             detections.forEach(detect => {
                 const { x, y, width, height } = detect.detection.box;
@@ -105,7 +105,7 @@ function detectEmotions() {
                 ctx.fillText(`${maxEmotion} (${(emotions[maxEmotion] * 100).toFixed(0)}%)`, x, y - 5);
 
                 // Aggregate for chart
-                emotionsList.forEach(e => aggregatedEmotions[e] += emotions[e]);
+                emotionsList.forEach(emo => aggregatedEmotions[emo] += emotions[emo]);
             });
             // Update chart with average percentages
             const faceCount = detections.length || 1; // avoid division by zero
