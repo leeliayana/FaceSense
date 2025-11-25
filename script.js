@@ -40,7 +40,7 @@ const emotionChart = new Chart(chartCtx, {
         datasets: [{
             label: 'Emotion Distribution (%)',
             data: emotionsList.map(() => 0), // initial values
-            backgroundColor: emotionsList.map(e => emotionColors[e]),
+            backgroundColor: emotionsList.map(emo => emotionColors[emo]),
         }]
     },
     options: {
