@@ -2,6 +2,7 @@ const video = document.getElementById('webcam');
 const canvas = document.getElementById('overlay');
 const ctx = canvas.getContext('2d');
 const faceCountLabel = document.getElementById('faceCount');
+const chartCtx = document.getElementById('emotionChart').getContext('2d');
 
 // define color for each emotion
 const emotionColors = {
@@ -13,6 +14,7 @@ const emotionColors = {
     disgusted: '#fd7e14',   // orange
     neutral: '#6c757d'      // gray
 };
+const emotionsList = Object.keys(emotionColors);
 
 // load models
 async function loadModels() {
@@ -30,6 +32,37 @@ async function startWebcam() {
         console.error('Error accessing webcam: ', err);
     }
 }
+
+const emotionChart = new Chart(chartCtx, {
+    type: 'pie',
+    data: {
+        labels: emotionsList,
+        datasets: [{
+            label: 'Emotion Distribution (%)',
+            data: emotionsList.map(() => 0), // initial values
+            backgroundColor: emotionsList.map(e => emotionColors[e]),
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    color: '#ffffff', // make legend text white for dark background
+                }
+            },
+            tooltip: {
+                callbacks: {
+                    label: function (context) {
+                        return `${context.label}: ${context.parsed}%`;
+                    }
+                }
+            }
+        }
+    }
+});
+
 
 // detect emotions
 function detectEmotions() {
@@ -49,24 +82,35 @@ function detectEmotions() {
             faceCountLabel.textContent = detections.length; // count faces
 
             // clear canvas
-            ctx.clearRect(0,0, canvas.width, canvas.height);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Aggregate emotions for chart
+            const aggregatedEmotions = {};
+            emotionsList.forEach(e => aggregatedEmotions[e] = 0);
 
             detections.forEach(detect => {
-                const {x, y, width, height} = detect.detection.box;
+                const { x, y, width, height } = detect.detection.box;
                 const emotions = detect.expressions;
-                const maxEmotion = Object.keys(emotions).reduce((a,b) => emotions[a] > emotions[b] ? a : b);
+                const maxEmotion = Object.keys(emotions).reduce((a, b) => emotions[a] > emotions[b] ? a : b);
                 const color = emotionColors[maxEmotion] || '#ff0000';
 
                 // draw bounding box
                 ctx.strokeStyle = color;
-                ctx.lineWidth = 4;
+                ctx.lineWidth = 3;
                 ctx.strokeRect(x, y, width, height);
 
                 // draw emotion label
                 ctx.fillStyle = color;
-                ctx.font = '18px Arial';
-                ctx.fillText(`${maxEmotion} (${(emotions[maxEmotion]*100).toFixed(0)}%)`, x, y - 5);
+                ctx.font = '16px Arial';
+                ctx.fillText(`${maxEmotion} (${(emotions[maxEmotion] * 100).toFixed(0)}%)`, x, y - 5);
+
+                // Aggregate for chart
+                emotionsList.forEach(e => aggregatedEmotions[e] += emotions[e]);
             });
+            // Update chart with average percentages
+            const faceCount = detections.length || 1; // avoid division by zero
+            emotionChart.data.datasets[0].data = emotionsList.map(e => ((aggregatedEmotions[e] / faceCount) * 100).toFixed(0));
+            emotionChart.update();
         }, 200); // every 200ms
     });
 }
