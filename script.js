@@ -109,7 +109,7 @@ function detectEmotions() {
             });
             // Update chart with average percentages
             const faceCount = detections.length || 1; // avoid division by zero
-            emotionChart.data.datasets[0].data = emotionsList.map(e => ((aggregatedEmotions[e] / faceCount) * 100).toFixed(0));
+            emotionChart.data.datasets[0].data = emotionsList.map(emo => ((aggregatedEmotions[emo] / faceCount) * 100).toFixed(0));
             emotionChart.update();
         }, 200); // every 200ms
     });
